@@ -7,3 +7,9 @@
 [submodule "ordenes-ms"]
 	path = ordenes-ms
 	url = https://github.com/Nest-MIcroservicio-softup/ordenes-ms.git
+[submodule "pagos-stripe-ms"]
+	path = pagos-stripe-ms
+	url = https://github.com/Nest-MIcroservicio-softup/pagos-stripe-ms.git
+[submodule "auth-ms"]
+	path = auth-ms
+	url = https://github.com/Nest-MIcroservicio-softup/auth-ms.git
