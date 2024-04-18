@@ -1,0 +1,68 @@
+version: '3'
+services:
+  nats-server:
+    image: nats:latest
+
+     
+  client-gateway:
+    build: 
+      context: ./client-gateway
+      dockerfile: dockerfile.prod
+    image: southamerica-west1-docker.pkg.dev/store-ms-420614/store-image/client-gateway
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
+    environment:
+      - PORT=${CLIENT_GATEWAY_PORT}
+      - NATS_SERVERS=nats://nats-server:4222
+
+  auth-ms:
+    build: 
+      context: ./auth-ms
+      dockerfile: dockerfile.prod
+    image: southamerica-west1-docker.pkg.dev/store-ms-420614/store-image/auth-ms
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=${AUTH_DATABSE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+
+
+  products-ms:
+    build: 
+      context: ./productos-ms
+      dockerfile: dockerfile.prod
+    image: southamerica-west1-docker.pkg.dev/store-ms-420614/store-image/products-ms  
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=file:./dev.db
+
+  orders-ms:
+    build: 
+      context: ./ordenes-ms
+      dockerfile: dockerfile.prod
+      args:
+        - ORDERS_DB_URL=${ORDERS_DB_URL}
+    image: southamerica-west1-docker.pkg.dev/store-ms-420614/store-image/orders-ms
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=${ORDERS_DB_URL}
+
+ 
+
+  payments-ms:
+    build: 
+      context: ./pagos-stripe-ms
+      dockerfile: dockerfile.prod
+    ports:
+      - ${PYMENT_MS_PORT}:${PYMENT_MS_PORT}
+    image: southamerica-west1-docker.pkg.dev/store-ms-420614/store-image/payments-stripe-ms
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-server:4222
+      - PYMENT_MS_PORT=${PYMENT_MS_PORT}
+      - STRIPE_SECRET=${STRIPE_SECRET}
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}

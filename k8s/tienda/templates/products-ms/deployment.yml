@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: productos-ms
+  name: productos-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productos-ms
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: productos-ms
+    spec:
+      containers:
+      - image: southamerica-west1-docker.pkg.dev/store-ms-420614/store-image/products-ms
+        name: products-ms
+        env:
+        - name: PORT
+          value: "3000"
+        - name: NATS_SERVERS
+          value: "nats://nats"  
+        - name: DATABASE_URL
+          value: "file:./dev.db"  
+        resources: {}
+status: {}
